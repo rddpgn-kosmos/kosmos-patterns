@@ -7,6 +7,8 @@ class Main {
         switch currentPattern {
             case 'AbstractFactory':
                 new AbstractFactoryPattern();
+            case 'FactoryMethod':
+                new FactoryMethodPattern();
         }
     }
 }

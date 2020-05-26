@@ -9,8 +9,13 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.main = function() {
 	var currentPattern = "AbstractFactory";
-	if(currentPattern == "AbstractFactory") {
+	switch(currentPattern) {
+	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
+		break;
+	case "FactoryMethod":
+		new patterns_FactoryMethodPattern();
+		break;
 	}
 };
 var patterns_AbstractFactoryPattern = function() {
@@ -43,6 +48,26 @@ patterns_AbstractFactoryPattern.prototype = {
 	}
 	,createKeyboard: function() {
 		var keyboard = this.factory.createKeyboard();
+	}
+};
+var patterns_FactoryMethodPattern = function() {
+	this.imitateWork("player");
+	this.imitateWork("enemy");
+};
+patterns_FactoryMethodPattern.prototype = {
+	switchFactory: function(type) {
+		switch(type) {
+		case "enemy":
+			this.factory = new patterns_factoryMethod_EnemyFactory(Math.random(),Math.random());
+			break;
+		case "player":
+			this.factory = new patterns_factoryMethod_PlayerFactory(Math.random(),Math.random());
+			break;
+		}
+	}
+	,imitateWork: function(type) {
+		this.switchFactory(type);
+		this.factory.doFancyStuff();
 	}
 };
 var patterns_abstractFactory_DellFactory = function() {
@@ -114,6 +139,85 @@ var patterns_abstractFactory_ThinkpadLaptop = function() {
 };
 patterns_abstractFactory_ThinkpadLaptop.__super__ = patterns_abstractFactory_Laptop;
 patterns_abstractFactory_ThinkpadLaptop.prototype = $extend(patterns_abstractFactory_Laptop.prototype,{
+});
+var patterns_factoryMethod_AbstractFactory = function(x,y) {
+	this.objX = x;
+	this.objY = y;
+};
+patterns_factoryMethod_AbstractFactory.prototype = {
+	doFancyStuff: function() {
+		if(this.obj == null) {
+			this.obj = this.createGameObject(this.objX,this.objY);
+		}
+		this.obj.setSpeed(Math.random() * 100 - 50);
+	}
+	,createGameObject: function(x,y) {
+		this.obj = new patterns_factoryMethod_DefaultObject(x,y);
+		return this.obj;
+	}
+};
+var patterns_factoryMethod_GameObject = function(x,y) {
+	this.speed = 0;
+	this.x = x;
+	this.y = y;
+};
+patterns_factoryMethod_GameObject.prototype = {
+	setSpeed: function(speed) {
+		this.speed = speed;
+	}
+	,getSpeed: function() {
+		return this.speed;
+	}
+	,update: function() {
+		this.x += this.x * this.speed;
+		this.y += this.y * this.speed;
+	}
+};
+var patterns_factoryMethod_DefaultObject = function(x,y) {
+	patterns_factoryMethod_GameObject.call(this,x,y);
+};
+patterns_factoryMethod_DefaultObject.__super__ = patterns_factoryMethod_GameObject;
+patterns_factoryMethod_DefaultObject.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
+});
+var patterns_factoryMethod_Enemy = function(x,y) {
+	patterns_factoryMethod_GameObject.call(this,x,y);
+};
+patterns_factoryMethod_Enemy.__super__ = patterns_factoryMethod_GameObject;
+patterns_factoryMethod_Enemy.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
+	update: function() {
+		this.x = Math.random();
+		this.y = this.speed * this.x;
+	}
+});
+var patterns_factoryMethod_EnemyFactory = function(x,y) {
+	patterns_factoryMethod_AbstractFactory.call(this,x,y);
+};
+patterns_factoryMethod_EnemyFactory.__super__ = patterns_factoryMethod_AbstractFactory;
+patterns_factoryMethod_EnemyFactory.prototype = $extend(patterns_factoryMethod_AbstractFactory.prototype,{
+	createGameObject: function(x,y) {
+		this.obj = new patterns_factoryMethod_Enemy(x,y);
+		return this.obj;
+	}
+});
+var patterns_factoryMethod_Player = function(x,y) {
+	patterns_factoryMethod_GameObject.call(this,x,y);
+};
+patterns_factoryMethod_Player.__super__ = patterns_factoryMethod_GameObject;
+patterns_factoryMethod_Player.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
+	update: function() {
+		this.x -= this.speed;
+		this.y -= this.speed;
+	}
+});
+var patterns_factoryMethod_PlayerFactory = function(x,y) {
+	patterns_factoryMethod_AbstractFactory.call(this,x,y);
+};
+patterns_factoryMethod_PlayerFactory.__super__ = patterns_factoryMethod_AbstractFactory;
+patterns_factoryMethod_PlayerFactory.prototype = $extend(patterns_factoryMethod_AbstractFactory.prototype,{
+	createGameObject: function(x,y) {
+		this.obj = new patterns_factoryMethod_Player(x,y);
+		return this.obj;
+	}
 });
 Main.main();
 })({});
