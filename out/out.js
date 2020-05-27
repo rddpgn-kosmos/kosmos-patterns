@@ -8,10 +8,13 @@ function $extend(from, fields) {
 }
 var Main = function() { };
 Main.main = function() {
-	var currentPattern = "AbstractFactory";
+	var currentPattern = "Builder";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
+		break;
+	case "Builder":
+		new patterns_BuilderPattern();
 		break;
 	case "FactoryMethod":
 		new patterns_FactoryMethodPattern();
@@ -49,6 +52,13 @@ patterns_AbstractFactoryPattern.prototype = {
 	,createKeyboard: function() {
 		var keyboard = this.factory.createKeyboard();
 	}
+};
+var patterns_BuilderPattern = function() {
+	var bobaBuilder = new patterns_builder_BobaBuilder();
+	var bibaBuilder = new patterns_builder_BibaBuilder();
+	var director = new patterns_builder_Director();
+	director.makeAB(bobaBuilder);
+	director.makeCA(bibaBuilder);
 };
 var patterns_FactoryMethodPattern = function() {
 	this.imitateWork("player");
@@ -140,6 +150,100 @@ var patterns_abstractFactory_ThinkpadLaptop = function() {
 patterns_abstractFactory_ThinkpadLaptop.__super__ = patterns_abstractFactory_Laptop;
 patterns_abstractFactory_ThinkpadLaptop.prototype = $extend(patterns_abstractFactory_Laptop.prototype,{
 });
+var patterns_builder_Biba = function() {
+};
+patterns_builder_Biba.prototype = {
+	makeA: function() {
+		console.log("patterns/builder/Biba.hx:9:","Вот тут вставляют штуки в бибу");
+	}
+	,makeB: function() {
+		console.log("patterns/builder/Biba.hx:13:","А тут ее настраивают");
+	}
+	,makeC: function() {
+		console.log("patterns/builder/Biba.hx:17:","Вот здесь биба получает свою последнюю деталь");
+	}
+};
+var patterns_builder_Builder = function() {
+};
+patterns_builder_Builder.prototype = {
+	makeA: function() {
+	}
+	,makeB: function() {
+	}
+	,makeC: function() {
+	}
+	,getResult: function() {
+		return null;
+	}
+};
+var patterns_builder_BibaBuilder = function() {
+	this.biba = new patterns_builder_Biba();
+	patterns_builder_Builder.call(this);
+};
+patterns_builder_BibaBuilder.__super__ = patterns_builder_Builder;
+patterns_builder_BibaBuilder.prototype = $extend(patterns_builder_Builder.prototype,{
+	makeA: function() {
+		this.biba.makeA();
+	}
+	,makeB: function() {
+		this.biba.makeB();
+	}
+	,makeC: function() {
+		this.biba.makeC();
+	}
+	,getResult: function() {
+		return this.biba;
+	}
+});
+var patterns_builder_Boba = function() {
+};
+patterns_builder_Boba.prototype = {
+	makeX: function() {
+		console.log("patterns/builder/Boba.hx:9:","У бобы другие штуки, она не разделяет интерфейс с бибой");
+	}
+	,makeY: function() {
+		console.log("patterns/builder/Boba.hx:13:","Говорят что боба лучше бибы");
+	}
+	,makeZ: function() {
+		console.log("patterns/builder/Boba.hx:17:","Вот бы в бухгалтерии не перепутали");
+	}
+};
+var patterns_builder_BobaBuilder = function() {
+	this.boba = new patterns_builder_Boba();
+	patterns_builder_Builder.call(this);
+};
+patterns_builder_BobaBuilder.__super__ = patterns_builder_Builder;
+patterns_builder_BobaBuilder.prototype = $extend(patterns_builder_Builder.prototype,{
+	makeA: function() {
+		this.boba.makeX();
+	}
+	,makeB: function() {
+		this.boba.makeY();
+	}
+	,makeC: function() {
+		this.boba.makeZ();
+	}
+	,getResult: function() {
+		return this.boba;
+	}
+});
+var patterns_builder_Director = function() {
+};
+patterns_builder_Director.prototype = {
+	makeABC: function(builder) {
+		builder.makeA();
+		builder.makeB();
+		builder.makeC();
+	}
+	,makeAB: function(builder) {
+		builder.makeA();
+		builder.makeB();
+	}
+	,makeCA: function(builder) {
+		builder.makeC();
+		builder.makeA();
+	}
+};
 var patterns_factoryMethod_AbstractFactory = function(x,y) {
 	this.objX = x;
 	this.objY = y;
