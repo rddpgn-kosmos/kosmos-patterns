@@ -2,7 +2,7 @@ import patterns.*;
 
 class Main {
     public static function main():Void {
-        var currentPattern:String = 'Builder';
+        var currentPattern:String = 'Cor';
 
         switch currentPattern {
             case 'AbstractFactory':
@@ -11,6 +11,10 @@ class Main {
                 new FactoryMethodPattern();
             case 'Builder':
                 new BuilderPattern();
+            case 'Prototype':
+                new PrototypePattern();
+            case 'Cor':
+                new CorPattern();
         }
     }
 }

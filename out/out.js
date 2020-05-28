@@ -7,8 +7,9 @@ function $extend(from, fields) {
 	return proto;
 }
 var Main = function() { };
+Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Builder";
+	var currentPattern = "Cor";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -16,18 +17,154 @@ Main.main = function() {
 	case "Builder":
 		new patterns_BuilderPattern();
 		break;
+	case "Cor":
+		new patterns_CorPattern();
+		break;
 	case "FactoryMethod":
 		new patterns_FactoryMethodPattern();
 		break;
+	case "Prototype":
+		new patterns_PrototypePattern();
+		break;
+	}
+};
+Math.__name__ = true;
+var Std = function() { };
+Std.__name__ = true;
+Std.string = function(s) {
+	return js_Boot.__string_rec(s,"");
+};
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.formatOutput = function(v,infos) {
+	var str = Std.string(v);
+	if(infos == null) {
+		return str;
+	}
+	var pstr = infos.fileName + ":" + infos.lineNumber;
+	if(infos.customParams != null) {
+		var _g = 0;
+		var _g1 = infos.customParams;
+		while(_g < _g1.length) {
+			var v1 = _g1[_g];
+			++_g;
+			str += ", " + Std.string(v1);
+		}
+	}
+	return pstr + ": " + str;
+};
+haxe_Log.trace = function(v,infos) {
+	var str = haxe_Log.formatOutput(v,infos);
+	if(typeof(console) != "undefined" && console.log != null) {
+		console.log(str);
+	}
+};
+var js__$Boot_HaxeError = function(val) {
+	Error.call(this);
+	this.val = val;
+	if(Error.captureStackTrace) {
+		Error.captureStackTrace(this,js__$Boot_HaxeError);
+	}
+};
+js__$Boot_HaxeError.__name__ = true;
+js__$Boot_HaxeError.__super__ = Error;
+js__$Boot_HaxeError.prototype = $extend(Error.prototype,{
+});
+var js_Boot = function() { };
+js_Boot.__name__ = true;
+js_Boot.__string_rec = function(o,s) {
+	if(o == null) {
+		return "null";
+	}
+	if(s.length >= 5) {
+		return "<...>";
+	}
+	var t = typeof(o);
+	if(t == "function" && (o.__name__ || o.__ename__)) {
+		t = "object";
+	}
+	switch(t) {
+	case "function":
+		return "<function>";
+	case "object":
+		if(o.__enum__) {
+			var e = $hxEnums[o.__enum__];
+			var n = e.__constructs__[o._hx_index];
+			var con = e[n];
+			if(con.__params__) {
+				s += "\t";
+				var tmp = n + "(";
+				var _g = [];
+				var _g1 = 0;
+				var _g2 = con.__params__;
+				while(_g1 < _g2.length) {
+					var p = _g2[_g1];
+					++_g1;
+					_g.push(js_Boot.__string_rec(o[p],s));
+				}
+				return tmp + _g.join(",") + ")";
+			} else {
+				return n;
+			}
+		}
+		if(((o) instanceof Array)) {
+			var str = "[";
+			s += "\t";
+			var _g3 = 0;
+			var _g11 = o.length;
+			while(_g3 < _g11) {
+				var i = _g3++;
+				str += (i > 0 ? "," : "") + js_Boot.__string_rec(o[i],s);
+			}
+			str += "]";
+			return str;
+		}
+		var tostr;
+		try {
+			tostr = o.toString;
+		} catch( e1 ) {
+			var e2 = ((e1) instanceof js__$Boot_HaxeError) ? e1.val : e1;
+			return "???";
+		}
+		if(tostr != null && tostr != Object.toString && typeof(tostr) == "function") {
+			var s2 = o.toString();
+			if(s2 != "[object Object]") {
+				return s2;
+			}
+		}
+		var str1 = "{\n";
+		s += "\t";
+		var hasp = o.hasOwnProperty != null;
+		var k = null;
+		for( k in o ) {
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
+			continue;
+		}
+		if(str1.length != 2) {
+			str1 += ", \n";
+		}
+		str1 += s + k + " : " + js_Boot.__string_rec(o[k],s);
+		}
+		s = s.substring(1);
+		str1 += "\n" + s + "}";
+		return str1;
+	case "string":
+		return o;
+	default:
+		return String(o);
 	}
 };
 var patterns_AbstractFactoryPattern = function() {
 	this.thinkpadFactory = new patterns_abstractFactory_ThinkpadFactory();
 	this.dellFactory = new patterns_abstractFactory_DellFactory();
-	console.log("patterns/AbstractFactoryPattern.hx:12:","Пример абстрактоной фабрики");
+	haxe_Log.trace("Пример абстрактоной фабрики",{ fileName : "patterns/AbstractFactoryPattern.hx", lineNumber : 12, className : "patterns.AbstractFactoryPattern", methodName : "new"});
 	this.imitateProcess("dell");
 	this.imitateProcess("thinkpad");
 };
+patterns_AbstractFactoryPattern.__name__ = true;
 patterns_AbstractFactoryPattern.prototype = {
 	imitateProcess: function(someConfigField) {
 		this.switchFactory(someConfigField);
@@ -43,7 +180,7 @@ patterns_AbstractFactoryPattern.prototype = {
 			this.factory = this.thinkpadFactory;
 			break;
 		default:
-			console.log("patterns/AbstractFactoryPattern.hx:30:","Invalid argument for factory: " + someConfigField);
+			haxe_Log.trace("Invalid argument for factory: " + someConfigField,{ fileName : "patterns/AbstractFactoryPattern.hx", lineNumber : 30, className : "patterns.AbstractFactoryPattern", methodName : "switchFactory"});
 		}
 	}
 	,createLaptop: function() {
@@ -58,12 +195,28 @@ var patterns_BuilderPattern = function() {
 	var bibaBuilder = new patterns_builder_BibaBuilder();
 	var director = new patterns_builder_Director();
 	director.makeAB(bobaBuilder);
+	var resultAbBoba = bobaBuilder.getResult();
 	director.makeCA(bibaBuilder);
+	var resultCABiba = bibaBuilder.getResult();
 };
+patterns_BuilderPattern.__name__ = true;
+var patterns_CorPattern = function() {
+	var simpleHandler = new patterns_cor_SimpleHandler();
+	var mediumHandler = new patterns_cor_MediumHandler();
+	var topHandler = new patterns_cor_TopHandler();
+	simpleHandler.setNextHandler(mediumHandler);
+	mediumHandler.setNextHandler(topHandler);
+	simpleHandler.processData(123);
+	simpleHandler.processData("Один, два, три");
+	simpleHandler.processData([1,2,3]);
+	simpleHandler.processData({ one : 1, two : 2, three : 3});
+};
+patterns_CorPattern.__name__ = true;
 var patterns_FactoryMethodPattern = function() {
 	this.imitateWork("player");
 	this.imitateWork("enemy");
 };
+patterns_FactoryMethodPattern.__name__ = true;
 patterns_FactoryMethodPattern.prototype = {
 	switchFactory: function(type) {
 		switch(type) {
@@ -80,8 +233,12 @@ patterns_FactoryMethodPattern.prototype = {
 		this.factory.doFancyStuff();
 	}
 };
+var patterns_PrototypePattern = function() {
+};
+patterns_PrototypePattern.__name__ = true;
 var patterns_abstractFactory_DellFactory = function() {
 };
+patterns_abstractFactory_DellFactory.__name__ = true;
 patterns_abstractFactory_DellFactory.prototype = {
 	createKeyboard: function() {
 		return new patterns_abstractFactory_DellKeyboard();
@@ -91,8 +248,9 @@ patterns_abstractFactory_DellFactory.prototype = {
 	}
 };
 var patterns_abstractFactory_Keyboard = function() {
-	console.log("patterns/abstractFactory/Keyboard.hx:10:",this.model);
+	haxe_Log.trace(this.model,{ fileName : "patterns/abstractFactory/Keyboard.hx", lineNumber : 10, className : "patterns.abstractFactory.Keyboard", methodName : "new"});
 };
+patterns_abstractFactory_Keyboard.__name__ = true;
 patterns_abstractFactory_Keyboard.prototype = {
 	getSwitches: function() {
 		return this.switches;
@@ -105,12 +263,14 @@ var patterns_abstractFactory_DellKeyboard = function() {
 	this.model = "Клавиатура Dell";
 	patterns_abstractFactory_Keyboard.call(this);
 };
+patterns_abstractFactory_DellKeyboard.__name__ = true;
 patterns_abstractFactory_DellKeyboard.__super__ = patterns_abstractFactory_Keyboard;
 patterns_abstractFactory_DellKeyboard.prototype = $extend(patterns_abstractFactory_Keyboard.prototype,{
 });
 var patterns_abstractFactory_Laptop = function() {
-	console.log("patterns/abstractFactory/Laptop.hx:9:",this.model);
+	haxe_Log.trace(this.model,{ fileName : "patterns/abstractFactory/Laptop.hx", lineNumber : 9, className : "patterns.abstractFactory.Laptop", methodName : "new"});
 };
+patterns_abstractFactory_Laptop.__name__ = true;
 patterns_abstractFactory_Laptop.prototype = {
 	getModel: function() {
 		return this.model;
@@ -123,11 +283,13 @@ var patterns_abstractFactory_DellLaptop = function() {
 	this.model = "Ноутбук Dell";
 	patterns_abstractFactory_Laptop.call(this);
 };
+patterns_abstractFactory_DellLaptop.__name__ = true;
 patterns_abstractFactory_DellLaptop.__super__ = patterns_abstractFactory_Laptop;
 patterns_abstractFactory_DellLaptop.prototype = $extend(patterns_abstractFactory_Laptop.prototype,{
 });
 var patterns_abstractFactory_ThinkpadFactory = function() {
 };
+patterns_abstractFactory_ThinkpadFactory.__name__ = true;
 patterns_abstractFactory_ThinkpadFactory.prototype = {
 	createKeyboard: function() {
 		return new patterns_abstractFactory_ThinkpadKeyboard();
@@ -140,6 +302,7 @@ var patterns_abstractFactory_ThinkpadKeyboard = function() {
 	this.model = "Клавиатура Thinkpad";
 	patterns_abstractFactory_Keyboard.call(this);
 };
+patterns_abstractFactory_ThinkpadKeyboard.__name__ = true;
 patterns_abstractFactory_ThinkpadKeyboard.__super__ = patterns_abstractFactory_Keyboard;
 patterns_abstractFactory_ThinkpadKeyboard.prototype = $extend(patterns_abstractFactory_Keyboard.prototype,{
 });
@@ -147,24 +310,27 @@ var patterns_abstractFactory_ThinkpadLaptop = function() {
 	this.model = "Ноутбук thinkpad";
 	patterns_abstractFactory_Laptop.call(this);
 };
+patterns_abstractFactory_ThinkpadLaptop.__name__ = true;
 patterns_abstractFactory_ThinkpadLaptop.__super__ = patterns_abstractFactory_Laptop;
 patterns_abstractFactory_ThinkpadLaptop.prototype = $extend(patterns_abstractFactory_Laptop.prototype,{
 });
 var patterns_builder_Biba = function() {
 };
+patterns_builder_Biba.__name__ = true;
 patterns_builder_Biba.prototype = {
 	makeA: function() {
-		console.log("patterns/builder/Biba.hx:9:","Вот тут вставляют штуки в бибу");
+		haxe_Log.trace("Вот тут вставляют штуки в бибу",{ fileName : "patterns/builder/Biba.hx", lineNumber : 9, className : "patterns.builder.Biba", methodName : "makeA"});
 	}
 	,makeB: function() {
-		console.log("patterns/builder/Biba.hx:13:","А тут ее настраивают");
+		haxe_Log.trace("А тут ее настраивают",{ fileName : "patterns/builder/Biba.hx", lineNumber : 13, className : "patterns.builder.Biba", methodName : "makeB"});
 	}
 	,makeC: function() {
-		console.log("patterns/builder/Biba.hx:17:","Вот здесь биба получает свою последнюю деталь");
+		haxe_Log.trace("Вот здесь биба получает свою последнюю деталь",{ fileName : "patterns/builder/Biba.hx", lineNumber : 17, className : "patterns.builder.Biba", methodName : "makeC"});
 	}
 };
 var patterns_builder_Builder = function() {
 };
+patterns_builder_Builder.__name__ = true;
 patterns_builder_Builder.prototype = {
 	makeA: function() {
 	}
@@ -180,6 +346,7 @@ var patterns_builder_BibaBuilder = function() {
 	this.biba = new patterns_builder_Biba();
 	patterns_builder_Builder.call(this);
 };
+patterns_builder_BibaBuilder.__name__ = true;
 patterns_builder_BibaBuilder.__super__ = patterns_builder_Builder;
 patterns_builder_BibaBuilder.prototype = $extend(patterns_builder_Builder.prototype,{
 	makeA: function() {
@@ -197,21 +364,23 @@ patterns_builder_BibaBuilder.prototype = $extend(patterns_builder_Builder.protot
 });
 var patterns_builder_Boba = function() {
 };
+patterns_builder_Boba.__name__ = true;
 patterns_builder_Boba.prototype = {
 	makeX: function() {
-		console.log("patterns/builder/Boba.hx:9:","У бобы другие штуки, она не разделяет интерфейс с бибой");
+		haxe_Log.trace("У бобы другие штуки, она не разделяет интерфейс с бибой",{ fileName : "patterns/builder/Boba.hx", lineNumber : 9, className : "patterns.builder.Boba", methodName : "makeX"});
 	}
 	,makeY: function() {
-		console.log("patterns/builder/Boba.hx:13:","Говорят что боба лучше бибы");
+		haxe_Log.trace("Говорят что боба лучше бибы",{ fileName : "patterns/builder/Boba.hx", lineNumber : 13, className : "patterns.builder.Boba", methodName : "makeY"});
 	}
 	,makeZ: function() {
-		console.log("patterns/builder/Boba.hx:17:","Вот бы в бухгалтерии не перепутали");
+		haxe_Log.trace("Вот бы в бухгалтерии не перепутали",{ fileName : "patterns/builder/Boba.hx", lineNumber : 17, className : "patterns.builder.Boba", methodName : "makeZ"});
 	}
 };
 var patterns_builder_BobaBuilder = function() {
 	this.boba = new patterns_builder_Boba();
 	patterns_builder_Builder.call(this);
 };
+patterns_builder_BobaBuilder.__name__ = true;
 patterns_builder_BobaBuilder.__super__ = patterns_builder_Builder;
 patterns_builder_BobaBuilder.prototype = $extend(patterns_builder_Builder.prototype,{
 	makeA: function() {
@@ -229,6 +398,7 @@ patterns_builder_BobaBuilder.prototype = $extend(patterns_builder_Builder.protot
 });
 var patterns_builder_Director = function() {
 };
+patterns_builder_Director.__name__ = true;
 patterns_builder_Director.prototype = {
 	makeABC: function(builder) {
 		builder.makeA();
@@ -244,10 +414,82 @@ patterns_builder_Director.prototype = {
 		builder.makeA();
 	}
 };
+var patterns_cor_BaseHandler = function() {
+};
+patterns_cor_BaseHandler.__name__ = true;
+patterns_cor_BaseHandler.prototype = {
+	setNextHandler: function(nextHandler) {
+		this.nextHandler = nextHandler;
+	}
+	,processData: function(data) {
+	}
+	,executeNextHandler: function(data) {
+		if(this.nextHandler != null) {
+			this.nextHandler.processData(data);
+		} else {
+			haxe_Log.trace("Дальнейшая обработка невозможна, т.к. кончились обработчики",{ fileName : "patterns/cor/BaseHandler.hx", lineNumber : 22, className : "patterns.cor.BaseHandler", methodName : "executeNextHandler"});
+		}
+	}
+};
+var patterns_cor_MediumHandler = function() {
+	patterns_cor_BaseHandler.call(this);
+};
+patterns_cor_MediumHandler.__name__ = true;
+patterns_cor_MediumHandler.__super__ = patterns_cor_BaseHandler;
+patterns_cor_MediumHandler.prototype = $extend(patterns_cor_BaseHandler.prototype,{
+	processData: function(data) {
+		if(typeof(data) == "string") {
+			this.processString(data);
+		} else {
+			haxe_Log.trace("Средняя обработка невозможна",{ fileName : "patterns/cor/MediumHandler.hx", lineNumber : 8, className : "patterns.cor.MediumHandler", methodName : "processData"});
+			this.executeNextHandler(data);
+		}
+	}
+	,processString: function(data) {
+		haxe_Log.trace("Нормлаьная такая обработка строки: ",{ fileName : "patterns/cor/MediumHandler.hx", lineNumber : 14, className : "patterns.cor.MediumHandler", methodName : "processString", customParams : [data]});
+	}
+});
+var patterns_cor_SimpleHandler = function() {
+	patterns_cor_BaseHandler.call(this);
+};
+patterns_cor_SimpleHandler.__name__ = true;
+patterns_cor_SimpleHandler.__super__ = patterns_cor_BaseHandler;
+patterns_cor_SimpleHandler.prototype = $extend(patterns_cor_BaseHandler.prototype,{
+	processData: function(data) {
+		if(typeof(data) == "number" && ((data | 0) === data)) {
+			this.processNumber(data);
+		} else {
+			haxe_Log.trace("Простая обработка невозможна",{ fileName : "patterns/cor/SimpleHandler.hx", lineNumber : 8, className : "patterns.cor.SimpleHandler", methodName : "processData"});
+			this.executeNextHandler(data);
+		}
+	}
+	,processNumber: function(data) {
+		haxe_Log.trace("Простая обработка числа: ",{ fileName : "patterns/cor/SimpleHandler.hx", lineNumber : 14, className : "patterns.cor.SimpleHandler", methodName : "processNumber", customParams : [data]});
+	}
+});
+var patterns_cor_TopHandler = function() {
+	patterns_cor_BaseHandler.call(this);
+};
+patterns_cor_TopHandler.__name__ = true;
+patterns_cor_TopHandler.__super__ = patterns_cor_BaseHandler;
+patterns_cor_TopHandler.prototype = $extend(patterns_cor_BaseHandler.prototype,{
+	processData: function(data) {
+		if(((data) instanceof Array) && data.__enum__ == null) {
+			this.processArray(data);
+		} else {
+			haxe_Log.trace("Топовая обработка невозможна",{ fileName : "patterns/cor/TopHandler.hx", lineNumber : 8, className : "patterns.cor.TopHandler", methodName : "processData"});
+			this.executeNextHandler(data);
+		}
+	}
+	,processArray: function(data) {
+		haxe_Log.trace("Хорошая, сложная обработка массива: ",{ fileName : "patterns/cor/TopHandler.hx", lineNumber : 14, className : "patterns.cor.TopHandler", methodName : "processArray", customParams : [data]});
+	}
+});
 var patterns_factoryMethod_AbstractFactory = function(x,y) {
 	this.objX = x;
 	this.objY = y;
 };
+patterns_factoryMethod_AbstractFactory.__name__ = true;
 patterns_factoryMethod_AbstractFactory.prototype = {
 	doFancyStuff: function() {
 		if(this.obj == null) {
@@ -265,6 +507,7 @@ var patterns_factoryMethod_GameObject = function(x,y) {
 	this.x = x;
 	this.y = y;
 };
+patterns_factoryMethod_GameObject.__name__ = true;
 patterns_factoryMethod_GameObject.prototype = {
 	setSpeed: function(speed) {
 		this.speed = speed;
@@ -280,12 +523,14 @@ patterns_factoryMethod_GameObject.prototype = {
 var patterns_factoryMethod_DefaultObject = function(x,y) {
 	patterns_factoryMethod_GameObject.call(this,x,y);
 };
+patterns_factoryMethod_DefaultObject.__name__ = true;
 patterns_factoryMethod_DefaultObject.__super__ = patterns_factoryMethod_GameObject;
 patterns_factoryMethod_DefaultObject.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
 });
 var patterns_factoryMethod_Enemy = function(x,y) {
 	patterns_factoryMethod_GameObject.call(this,x,y);
 };
+patterns_factoryMethod_Enemy.__name__ = true;
 patterns_factoryMethod_Enemy.__super__ = patterns_factoryMethod_GameObject;
 patterns_factoryMethod_Enemy.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
 	update: function() {
@@ -296,6 +541,7 @@ patterns_factoryMethod_Enemy.prototype = $extend(patterns_factoryMethod_GameObje
 var patterns_factoryMethod_EnemyFactory = function(x,y) {
 	patterns_factoryMethod_AbstractFactory.call(this,x,y);
 };
+patterns_factoryMethod_EnemyFactory.__name__ = true;
 patterns_factoryMethod_EnemyFactory.__super__ = patterns_factoryMethod_AbstractFactory;
 patterns_factoryMethod_EnemyFactory.prototype = $extend(patterns_factoryMethod_AbstractFactory.prototype,{
 	createGameObject: function(x,y) {
@@ -306,6 +552,7 @@ patterns_factoryMethod_EnemyFactory.prototype = $extend(patterns_factoryMethod_A
 var patterns_factoryMethod_Player = function(x,y) {
 	patterns_factoryMethod_GameObject.call(this,x,y);
 };
+patterns_factoryMethod_Player.__name__ = true;
 patterns_factoryMethod_Player.__super__ = patterns_factoryMethod_GameObject;
 patterns_factoryMethod_Player.prototype = $extend(patterns_factoryMethod_GameObject.prototype,{
 	update: function() {
@@ -316,6 +563,7 @@ patterns_factoryMethod_Player.prototype = $extend(patterns_factoryMethod_GameObj
 var patterns_factoryMethod_PlayerFactory = function(x,y) {
 	patterns_factoryMethod_AbstractFactory.call(this,x,y);
 };
+patterns_factoryMethod_PlayerFactory.__name__ = true;
 patterns_factoryMethod_PlayerFactory.__super__ = patterns_factoryMethod_AbstractFactory;
 patterns_factoryMethod_PlayerFactory.prototype = $extend(patterns_factoryMethod_AbstractFactory.prototype,{
 	createGameObject: function(x,y) {
@@ -323,5 +571,11 @@ patterns_factoryMethod_PlayerFactory.prototype = $extend(patterns_factoryMethod_
 		return this.obj;
 	}
 });
+String.__name__ = true;
+Array.__name__ = true;
+Object.defineProperty(js__$Boot_HaxeError.prototype,"message",{ get : function() {
+	return String(this.val);
+}});
+js_Boot.__toStr = ({ }).toString;
 Main.main();
 })({});

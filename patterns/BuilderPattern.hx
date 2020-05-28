@@ -3,7 +3,7 @@ package patterns;
 import patterns.builder.*;
 
 class BuilderPattern {
-    public function new() {
+    public function new():Void {
         var bobaBuilder:BobaBuilder = new BobaBuilder();
         var bibaBuilder:BibaBuilder = new BibaBuilder();
         var director:Director = new Director();

@@ -6,7 +6,7 @@ class FactoryMethodPattern {
 
     private var factory:AbstractFactory;
 
-    public function new() {
+    public function new():Void {
         imitateWork('player');
         imitateWork('enemy');
     }

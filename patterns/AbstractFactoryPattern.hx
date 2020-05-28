@@ -8,7 +8,7 @@ class AbstractFactoryPattern {
     private var thinkpadFactory:AbstractFactory = new ThinkpadFactory();
     private var factory:AbstractFactory;
 
-    public function new() {
+    public function new():Void {
         trace('Пример абстрактоной фабрики');
         imitateProcess('dell');
         imitateProcess('thinkpad');
