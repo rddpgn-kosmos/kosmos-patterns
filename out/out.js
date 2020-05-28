@@ -9,10 +9,13 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Observer";
+	var currentPattern = "Adapter";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
+		break;
+	case "Adapter":
+		new patterns_AdapterPattern();
 		break;
 	case "Builder":
 		new patterns_BuilderPattern();
@@ -252,6 +255,26 @@ patterns_AbstractFactoryPattern.prototype = {
 		var keyboard = this.factory.createKeyboard();
 	}
 };
+var patterns_AdapterPattern = function() {
+	var bibas = [];
+	var _g = 0;
+	while(_g < 10) {
+		var i = _g++;
+		if(Math.random() > 0.5) {
+			bibas.push(new patterns_adapterPattern_Biba(Math.random()));
+		} else {
+			var boba = new patterns_adapterPattern_Boba(Math.random());
+			bibas.push(new patterns_adapterPattern_BobaAdapter(boba));
+		}
+	}
+	var _g1 = 0;
+	while(_g1 < bibas.length) {
+		var biba = bibas[_g1];
+		++_g1;
+		haxe_Log.trace("Радиус бибы: ",{ fileName : "patterns/AdapterPattern.hx", lineNumber : 19, className : "patterns.AdapterPattern", methodName : "new", customParams : [biba.getRadius()]});
+	}
+};
+patterns_AdapterPattern.__name__ = true;
 var patterns_BuilderPattern = function() {
 	var bobaBuilder = new patterns_builder_BobaBuilder();
 	var bibaBuilder = new patterns_builder_BibaBuilder();
@@ -392,6 +415,34 @@ patterns_abstractFactory_ThinkpadLaptop.__name__ = true;
 patterns_abstractFactory_ThinkpadLaptop.__super__ = patterns_abstractFactory_Laptop;
 patterns_abstractFactory_ThinkpadLaptop.prototype = $extend(patterns_abstractFactory_Laptop.prototype,{
 });
+var patterns_adapterPattern_Biba = function(radius) {
+	this.radius = radius;
+};
+patterns_adapterPattern_Biba.__name__ = true;
+patterns_adapterPattern_Biba.prototype = {
+	getRadius: function() {
+		return this.radius;
+	}
+};
+var patterns_adapterPattern_Boba = function(width) {
+	this.width = width;
+	this.height = width;
+};
+patterns_adapterPattern_Boba.__name__ = true;
+patterns_adapterPattern_Boba.prototype = {
+	getSideSize: function() {
+		return this.width;
+	}
+};
+var patterns_adapterPattern_BobaAdapter = function(adaptee) {
+	this.adaptee = adaptee;
+};
+patterns_adapterPattern_BobaAdapter.__name__ = true;
+patterns_adapterPattern_BobaAdapter.prototype = {
+	getRadius: function() {
+		return this.adaptee.getSideSize() * Math.sqrt(2) / 2;
+	}
+};
 var patterns_builder_Biba = function() {
 };
 patterns_builder_Biba.__name__ = true;
