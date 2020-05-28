@@ -9,7 +9,7 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Cor";
+	var currentPattern = "Observer";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -22,6 +22,9 @@ Main.main = function() {
 		break;
 	case "FactoryMethod":
 		new patterns_FactoryMethodPattern();
+		break;
+	case "Observer":
+		new patterns_ObserverPattern();
 		break;
 	case "Prototype":
 		new patterns_PrototypePattern();
@@ -57,6 +60,65 @@ haxe_Log.trace = function(v,infos) {
 	var str = haxe_Log.formatOutput(v,infos);
 	if(typeof(console) != "undefined" && console.log != null) {
 		console.log(str);
+	}
+};
+var haxe_ds_List = function() {
+	this.length = 0;
+};
+haxe_ds_List.__name__ = true;
+haxe_ds_List.prototype = {
+	push: function(item) {
+		var x = new haxe_ds__$List_ListNode(item,this.h);
+		this.h = x;
+		if(this.q == null) {
+			this.q = x;
+		}
+		this.length++;
+	}
+	,remove: function(v) {
+		var prev = null;
+		var l = this.h;
+		while(l != null) {
+			if(l.item == v) {
+				if(prev == null) {
+					this.h = l.next;
+				} else {
+					prev.next = l.next;
+				}
+				if(this.q == l) {
+					this.q = prev;
+				}
+				this.length--;
+				return true;
+			}
+			prev = l;
+			l = l.next;
+		}
+		return false;
+	}
+};
+var haxe_ds__$List_ListNode = function(item,next) {
+	this.item = item;
+	this.next = next;
+};
+haxe_ds__$List_ListNode.__name__ = true;
+var haxe_ds_StringMap = function() {
+	this.h = { };
+};
+haxe_ds_StringMap.__name__ = true;
+haxe_ds_StringMap.prototype = {
+	setReserved: function(key,value) {
+		if(this.rh == null) {
+			this.rh = { };
+		}
+		this.rh["$" + key] = value;
+	}
+	,getReserved: function(key) {
+		if(this.rh == null) {
+			return null;
+		} else {
+			return this.rh["$" + key];
+		}
 	}
 };
 var js__$Boot_HaxeError = function(val) {
@@ -233,6 +295,22 @@ patterns_FactoryMethodPattern.prototype = {
 		this.factory.doFancyStuff();
 	}
 };
+var patterns_ObserverPattern = function() {
+	var eventManager = new patterns_observer_EventManager();
+	var listenerBiba = new patterns_observer_GenericListener();
+	listenerBiba.name = "Biba";
+	var listenerBoba = new patterns_observer_GenericListener();
+	listenerBoba.name = "Boba";
+	eventManager.addListener("open",listenerBiba);
+	eventManager.addListener("open",listenerBoba);
+	eventManager.notifyEvent("open",null);
+	eventManager.addListener("close",listenerBoba);
+	eventManager.notifyEvent("close",null);
+	eventManager.notifyEvent("ooo",null);
+	eventManager.removeListener("open",listenerBoba);
+	eventManager.notifyEvent("open",null);
+};
+patterns_ObserverPattern.__name__ = true;
 var patterns_PrototypePattern = function() {
 };
 patterns_PrototypePattern.__name__ = true;
@@ -571,8 +649,62 @@ patterns_factoryMethod_PlayerFactory.prototype = $extend(patterns_factoryMethod_
 		return this.obj;
 	}
 });
+var patterns_observer_EventManager = function() {
+	this.listeners = new haxe_ds_StringMap();
+};
+patterns_observer_EventManager.__name__ = true;
+patterns_observer_EventManager.prototype = {
+	addListener: function(event,listener) {
+		var _this = this.listeners;
+		if((__map_reserved[event] != null ? _this.getReserved(event) : _this.h[event]) == null) {
+			var this1 = this.listeners;
+			var v = new haxe_ds_List();
+			var _this1 = this1;
+			if(__map_reserved[event] != null) {
+				_this1.setReserved(event,v);
+			} else {
+				_this1.h[event] = v;
+			}
+			var _this2 = this.listeners;
+			(__map_reserved[event] != null ? _this2.getReserved(event) : _this2.h[event]).push(listener);
+		} else {
+			var _this3 = this.listeners;
+			(__map_reserved[event] != null ? _this3.getReserved(event) : _this3.h[event]).push(listener);
+		}
+	}
+	,removeListener: function(event,listener) {
+		var _this = this.listeners;
+		if((__map_reserved[event] != null ? _this.getReserved(event) : _this.h[event]) != null) {
+			var _this1 = this.listeners;
+			(__map_reserved[event] != null ? _this1.getReserved(event) : _this1.h[event]).remove(listener);
+		}
+	}
+	,notifyEvent: function(event,data) {
+		var _this = this.listeners;
+		if((__map_reserved[event] != null ? _this.getReserved(event) : _this.h[event]) != null) {
+			var _this1 = this.listeners;
+			var _g_head = (__map_reserved[event] != null ? _this1.getReserved(event) : _this1.h[event]).h;
+			while(_g_head != null) {
+				var val = _g_head.item;
+				_g_head = _g_head.next;
+				var listener = val;
+				listener.update(event,data);
+			}
+		}
+	}
+};
+var patterns_observer_GenericListener = function() {
+	this.name = "generic listener";
+};
+patterns_observer_GenericListener.__name__ = true;
+patterns_observer_GenericListener.prototype = {
+	update: function(event,data) {
+		haxe_Log.trace("Подписчик: " + this.name + "получил событие: ",{ fileName : "patterns/observer/GenericListener.hx", lineNumber : 9, className : "patterns.observer.GenericListener", methodName : "update", customParams : [event,data]});
+	}
+};
 String.__name__ = true;
 Array.__name__ = true;
+var __map_reserved = {};
 Object.defineProperty(js__$Boot_HaxeError.prototype,"message",{ get : function() {
 	return String(this.val);
 }});
