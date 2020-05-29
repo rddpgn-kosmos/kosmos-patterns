@@ -9,7 +9,7 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Command";
+	var currentPattern = "Mediator";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -28,6 +28,9 @@ Main.main = function() {
 		break;
 	case "FactoryMethod":
 		new patterns_FactoryMethodPattern();
+		break;
+	case "Mediator":
+		new patterns_MediatorPattern();
 		break;
 	case "Observer":
 		new patterns_ObserverPattern();
@@ -325,6 +328,10 @@ patterns_FactoryMethodPattern.prototype = {
 		this.factory.doFancyStuff();
 	}
 };
+var patterns_MediatorPattern = function() {
+	new patterns_mediator_Controller();
+};
+patterns_MediatorPattern.__name__ = true;
 var patterns_ObserverPattern = function() {
 	var eventManager = new patterns_observer_EventManager();
 	var listenerBiba = new patterns_observer_GenericListener();
@@ -762,6 +769,57 @@ patterns_factoryMethod_PlayerFactory.prototype = $extend(patterns_factoryMethod_
 		return this.obj;
 	}
 });
+var patterns_mediator_Biba = function(controller) {
+	this.controller = controller;
+};
+patterns_mediator_Biba.__name__ = true;
+patterns_mediator_Biba.prototype = {
+	click: function() {
+		this.controller.notify("click");
+	}
+};
+var patterns_mediator_Boba = function(controller) {
+	this.controller = controller;
+};
+patterns_mediator_Boba.__name__ = true;
+patterns_mediator_Boba.prototype = {
+	smash: function() {
+		this.controller.notify("smash");
+	}
+};
+var patterns_mediator_Booba = function(controller) {
+	this.controller = controller;
+};
+patterns_mediator_Booba.__name__ = true;
+patterns_mediator_Booba.prototype = {
+	check: function() {
+		this.controller.notify("check");
+	}
+};
+var patterns_mediator_Controller = function() {
+	this.biba = new patterns_mediator_Biba(this);
+	this.boba = new patterns_mediator_Boba(this);
+	this.booba = new patterns_mediator_Booba(this);
+	this.biba.click();
+	this.boba.smash();
+	this.booba.check();
+};
+patterns_mediator_Controller.__name__ = true;
+patterns_mediator_Controller.prototype = {
+	notify: function(event) {
+		switch(event) {
+		case "check":
+			haxe_Log.trace("А тут еще что-то происходит",{ fileName : "patterns/mediator/Controller.hx", lineNumber : 28, className : "patterns.mediator.Controller", methodName : "notify"});
+			break;
+		case "click":
+			haxe_Log.trace("Реакция на клик, возможно делаю другие штуки",{ fileName : "patterns/mediator/Controller.hx", lineNumber : 24, className : "patterns.mediator.Controller", methodName : "notify"});
+			break;
+		case "smash":
+			haxe_Log.trace("Тут можно было бы запускать всякие методы, но мне не хватает фантазии их придумать",{ fileName : "patterns/mediator/Controller.hx", lineNumber : 26, className : "patterns.mediator.Controller", methodName : "notify"});
+			break;
+		}
+	}
+};
 var patterns_observer_EventManager = function() {
 	this.listeners = new haxe_ds_StringMap();
 };
