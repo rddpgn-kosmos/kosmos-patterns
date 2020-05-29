@@ -9,7 +9,7 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Visitor";
+	var currentPattern = "Command";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -574,20 +574,18 @@ patterns_builder_Director.prototype = {
 	}
 };
 var patterns_commandPattern_App = function() {
-	var commandMakeA = new patterns_commandPattern_CommandMakeA(this);
-	var commandReplaceBX = new patterns_commandPattern_CommandReplaceBX(this);
-	var buttonA = new patterns_commandPattern_Button(commandMakeA);
-	var buttonB = new patterns_commandPattern_Button(commandReplaceBX);
+	var buttonA = new patterns_commandPattern_Button(new patterns_commandPattern_CommandMakeA(this));
+	var buttonB = new patterns_commandPattern_Button(new patterns_commandPattern_CommandReplaceBX(this));
 	buttonA.click();
 	buttonB.click();
 };
 patterns_commandPattern_App.__name__ = true;
 patterns_commandPattern_App.prototype = {
 	makeA: function(command) {
-		haxe_Log.trace("Делаю штуку: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 16, className : "patterns.commandPattern.App", methodName : "makeA", customParams : [command]});
+		haxe_Log.trace("Делаю штуку: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 13, className : "patterns.commandPattern.App", methodName : "makeA", customParams : [command]});
 	}
 	,replaceB: function(id) {
-		haxe_Log.trace("Заменяю элемент: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 20, className : "patterns.commandPattern.App", methodName : "replaceB", customParams : [id]});
+		haxe_Log.trace("Заменяю элемент: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 17, className : "patterns.commandPattern.App", methodName : "replaceB", customParams : [id]});
 	}
 };
 var patterns_commandPattern_Button = function(callback) {

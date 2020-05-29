@@ -2,11 +2,8 @@ package patterns.commandPattern;
 
 class App {
     public function new() {
-        var commandMakeA:Command = new CommandMakeA(this);
-        var commandReplaceBX:Command = new CommandReplaceBX(this);
-
-        var buttonA:Button = new Button(commandMakeA);
-        var buttonB:Button = new Button(commandReplaceBX);
+        var buttonA:Button = new Button(new CommandMakeA(this));
+        var buttonB:Button = new Button(new CommandReplaceBX(this));
 
         buttonA.click();
         buttonB.click();
