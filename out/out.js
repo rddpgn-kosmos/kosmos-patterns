@@ -9,13 +9,16 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Command";
+	var currentPattern = "Bridge";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
 		break;
 	case "Adapter":
 		new patterns_AdapterPattern();
+		break;
+	case "Bridge":
+		new patterns_BridgePattern();
 		break;
 	case "Builder":
 		new patterns_BuilderPattern();
@@ -284,6 +287,19 @@ var patterns_AdapterPattern = function() {
 	}
 };
 patterns_AdapterPattern.__name__ = true;
+var patterns_BridgePattern = function() {
+	var serverA = new patterns_bridge_ServerA();
+	var serverB = new patterns_bridge_ServerB();
+	var clientAA = new patterns_bridge_ClientA(serverA);
+	var clientAB = new patterns_bridge_ClientA(serverB);
+	var clientBA = new patterns_bridge_ClientB(serverA);
+	var clientBB = new patterns_bridge_ClientB(serverB);
+	haxe_Log.trace(clientAA.getX(),{ fileName : "patterns/BridgePattern.hx", lineNumber : 14, className : "patterns.BridgePattern", methodName : "new"});
+	haxe_Log.trace(clientAB.getX(),{ fileName : "patterns/BridgePattern.hx", lineNumber : 15, className : "patterns.BridgePattern", methodName : "new"});
+	haxe_Log.trace(clientBA.getX(),{ fileName : "patterns/BridgePattern.hx", lineNumber : 16, className : "patterns.BridgePattern", methodName : "new"});
+	haxe_Log.trace(clientBB.getX(),{ fileName : "patterns/BridgePattern.hx", lineNumber : 17, className : "patterns.BridgePattern", methodName : "new"});
+};
+patterns_BridgePattern.__name__ = true;
 var patterns_BuilderPattern = function() {
 	var bobaBuilder = new patterns_builder_BobaBuilder();
 	var bibaBuilder = new patterns_builder_BibaBuilder();
@@ -471,6 +487,52 @@ patterns_adapterPattern_BobaAdapter.__name__ = true;
 patterns_adapterPattern_BobaAdapter.prototype = {
 	getRadius: function() {
 		return this.adaptee.getSideSize() * Math.sqrt(2) / 2;
+	}
+};
+var patterns_bridge_ClientA = function(server) {
+	this.server = server;
+};
+patterns_bridge_ClientA.__name__ = true;
+patterns_bridge_ClientA.prototype = {
+	getX: function() {
+		return this.server.getX();
+	}
+	,getY: function() {
+		return this.server.getY();
+	}
+};
+var patterns_bridge_ClientB = function(server) {
+	this.server = server;
+};
+patterns_bridge_ClientB.__name__ = true;
+patterns_bridge_ClientB.prototype = {
+	getX: function() {
+		return Math.round(this.server.getX() / 2);
+	}
+	,getY: function() {
+		return Math.round(this.server.getY() * Math.random());
+	}
+};
+var patterns_bridge_ServerA = function() {
+};
+patterns_bridge_ServerA.__name__ = true;
+patterns_bridge_ServerA.prototype = {
+	getX: function() {
+		return 32;
+	}
+	,getY: function() {
+		return 128;
+	}
+};
+var patterns_bridge_ServerB = function() {
+};
+patterns_bridge_ServerB.__name__ = true;
+patterns_bridge_ServerB.prototype = {
+	getX: function() {
+		return 256;
+	}
+	,getY: function() {
+		return 1024;
 	}
 };
 var patterns_builder_Biba = function() {
