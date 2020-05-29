@@ -9,7 +9,7 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Adapter";
+	var currentPattern = "Command";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -19,6 +19,9 @@ Main.main = function() {
 		break;
 	case "Builder":
 		new patterns_BuilderPattern();
+		break;
+	case "Command":
+		new patterns_CommandPattern();
 		break;
 	case "Cor":
 		new patterns_CorPattern();
@@ -285,6 +288,10 @@ var patterns_BuilderPattern = function() {
 	var resultCABiba = bibaBuilder.getResult();
 };
 patterns_BuilderPattern.__name__ = true;
+var patterns_CommandPattern = function() {
+	new patterns_commandPattern_App();
+};
+patterns_CommandPattern.__name__ = true;
 var patterns_CorPattern = function() {
 	var simpleHandler = new patterns_cor_SimpleHandler();
 	var mediumHandler = new patterns_cor_MediumHandler();
@@ -543,6 +550,61 @@ patterns_builder_Director.prototype = {
 		builder.makeA();
 	}
 };
+var patterns_commandPattern_App = function() {
+	var commandMakeA = new patterns_commandPattern_CommandMakeA(this);
+	var commandReplaceBX = new patterns_commandPattern_CommandReplaceBX(this);
+	var buttonA = new patterns_commandPattern_Button(commandMakeA);
+	var buttonB = new patterns_commandPattern_Button(commandReplaceBX);
+	buttonA.click();
+	buttonB.click();
+};
+patterns_commandPattern_App.__name__ = true;
+patterns_commandPattern_App.prototype = {
+	makeA: function(command) {
+		haxe_Log.trace("Делаю штуку: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 16, className : "patterns.commandPattern.App", methodName : "makeA", customParams : [command]});
+	}
+	,replaceB: function(id) {
+		haxe_Log.trace("Заменяю элемент: ",{ fileName : "patterns/commandPattern/App.hx", lineNumber : 20, className : "patterns.commandPattern.App", methodName : "replaceB", customParams : [id]});
+	}
+};
+var patterns_commandPattern_Button = function(callback) {
+	this.callback = callback;
+};
+patterns_commandPattern_Button.__name__ = true;
+patterns_commandPattern_Button.prototype = {
+	click: function() {
+		this.callback.execute();
+	}
+};
+var patterns_commandPattern_Command = function(app) {
+	this.app = app;
+};
+patterns_commandPattern_Command.__name__ = true;
+patterns_commandPattern_Command.prototype = {
+	execute: function() {
+	}
+};
+var patterns_commandPattern_CommandMakeA = function(app) {
+	patterns_commandPattern_Command.call(this,app);
+};
+patterns_commandPattern_CommandMakeA.__name__ = true;
+patterns_commandPattern_CommandMakeA.__super__ = patterns_commandPattern_Command;
+patterns_commandPattern_CommandMakeA.prototype = $extend(patterns_commandPattern_Command.prototype,{
+	execute: function() {
+		this.app.makeA("сохрани коробочку");
+	}
+});
+var patterns_commandPattern_CommandReplaceBX = function(app) {
+	this.idBX = 256;
+	patterns_commandPattern_Command.call(this,app);
+};
+patterns_commandPattern_CommandReplaceBX.__name__ = true;
+patterns_commandPattern_CommandReplaceBX.__super__ = patterns_commandPattern_Command;
+patterns_commandPattern_CommandReplaceBX.prototype = $extend(patterns_commandPattern_Command.prototype,{
+	execute: function() {
+		this.app.replaceB(this.idBX);
+	}
+});
 var patterns_cor_BaseHandler = function() {
 };
 patterns_cor_BaseHandler.__name__ = true;

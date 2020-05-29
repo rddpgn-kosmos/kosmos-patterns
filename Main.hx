@@ -2,7 +2,7 @@ import patterns.*;
 
 class Main {
     public static function main():Void {
-        var currentPattern:String = 'Adapter';
+        var currentPattern:String = 'Command';
 
         switch currentPattern {
             case 'AbstractFactory':
@@ -19,6 +19,8 @@ class Main {
                 new ObserverPattern();
             case 'Adapter':
                 new AdapterPattern();
+            case 'Command':
+                new CommandPattern();
         }
     }
 }
