@@ -9,7 +9,7 @@ function $extend(from, fields) {
 var Main = function() { };
 Main.__name__ = true;
 Main.main = function() {
-	var currentPattern = "Mediator";
+	var currentPattern = "Visitor";
 	switch(currentPattern) {
 	case "AbstractFactory":
 		new patterns_AbstractFactoryPattern();
@@ -37,6 +37,9 @@ Main.main = function() {
 		break;
 	case "Prototype":
 		new patterns_PrototypePattern();
+		break;
+	case "Visitor":
+		new patterns_VisitorPattern();
 		break;
 	}
 };
@@ -351,6 +354,19 @@ patterns_ObserverPattern.__name__ = true;
 var patterns_PrototypePattern = function() {
 };
 patterns_PrototypePattern.__name__ = true;
+var patterns_VisitorPattern = function() {
+	var arr = [];
+	arr.push(new patterns_visitor_ObjA());
+	arr.push(new patterns_visitor_ObjB());
+	var visitor = new patterns_visitor_Visitor();
+	var _g = 0;
+	while(_g < arr.length) {
+		var i = arr[_g];
+		++_g;
+		i.accept(visitor);
+	}
+};
+patterns_VisitorPattern.__name__ = true;
 var patterns_abstractFactory_DellFactory = function() {
 };
 patterns_abstractFactory_DellFactory.__name__ = true;
@@ -871,6 +887,33 @@ patterns_observer_GenericListener.__name__ = true;
 patterns_observer_GenericListener.prototype = {
 	update: function(event,data) {
 		haxe_Log.trace("Подписчик: " + this.name + "получил событие: ",{ fileName : "patterns/observer/GenericListener.hx", lineNumber : 9, className : "patterns.observer.GenericListener", methodName : "update", customParams : [event,data]});
+	}
+};
+var patterns_visitor_ObjA = function() {
+};
+patterns_visitor_ObjA.__name__ = true;
+patterns_visitor_ObjA.prototype = {
+	accept: function(visitor) {
+		visitor.save(this);
+	}
+};
+var patterns_visitor_ObjB = function() {
+};
+patterns_visitor_ObjB.__name__ = true;
+patterns_visitor_ObjB.prototype = {
+	accept: function(visitor) {
+		visitor.load(this);
+	}
+};
+var patterns_visitor_Visitor = function() {
+};
+patterns_visitor_Visitor.__name__ = true;
+patterns_visitor_Visitor.prototype = {
+	save: function(obj) {
+		haxe_Log.trace("Сохраняю объект, хоть у него и нет такого функционала",{ fileName : "patterns/visitor/Visitor.hx", lineNumber : 10, className : "patterns.visitor.Visitor", methodName : "save"});
+	}
+	,load: function(obj) {
+		haxe_Log.trace("Загружаю объект, хоть у него и нет такого функционала",{ fileName : "patterns/visitor/Visitor.hx", lineNumber : 14, className : "patterns.visitor.Visitor", methodName : "load"});
 	}
 };
 String.__name__ = true;
